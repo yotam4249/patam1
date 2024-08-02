@@ -14,12 +14,12 @@ public class Tile {
         return new Tile(score,letter);
     }
     
-    public int getValue()
+    int getScore()
     {
         return this.score;
     }
 
-    public char getLetter()
+     char getLetter()
     {
         return this.letter;
     }
@@ -33,7 +33,11 @@ public class Tile {
     {
         if (this==o && this.getClass() == o.getClass())
         {
-            return true;
+            Tile t = (Tile)o;
+            if(t.getScore() == this.getScore() && t.getLetter() == this.getLetter())
+            {
+                return true;
+            }
         }
         return false;
     }
