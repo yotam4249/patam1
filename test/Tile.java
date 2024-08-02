@@ -1,7 +1,7 @@
 package test;
 public class Tile {
-    private final int score;
-    private final char letter;
+    public final int score;
+    public final char letter;
 
     private Tile(int score,char letter)
     {
@@ -41,6 +41,7 @@ public class Tile {
         public final int[] starters = {9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
         private int[] amounts = {9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
         private Tile[] tiles;
+        private static Bag b = null;
 
         private Bag()
         {
@@ -145,7 +146,14 @@ public class Tile {
             return amounts.clone();
         }
        
-
+        public static Bag getBag()
+        {
+            if(b == null)
+            {
+                b = new Bag();
+            }
+            return b;
+        }
     }
 }
 
