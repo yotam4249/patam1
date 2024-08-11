@@ -111,7 +111,7 @@ public class Board {
         return true;
     }
 
-    public Word horizontalAfterWord(Word w,int i) // The word is after w - SENARIO 1
+    public Word horizontalAfterWord(Word w,int i) // The word is right to w - SENARIO 1
     {
         ArrayList<Tile> tempTileArr = new ArrayList<>();
         Tile[] t = null;
@@ -197,20 +197,87 @@ public class Board {
         return r;
     }
 
-    public Word horizontalAbove(Word w,int i)
+    public Word horizontalRight(Word w,int i,int j)// SENARIO 5
     {
         ArrayList<Tile> tempTileArr = new ArrayList<>();
         Tile[] t = null;
         Word tempWord = null;
-        return tempWord;
+        Word r = null;
+        int tempCol = j;
+        for(;j<15 && b[i][j] != null; j++)
+        {
+            tempTileArr.add(b[i][j]);
+        }
+        t = tempTileArr.toArray(new Tile[0]);
+        tempWord = new Word(t,i,tempCol,false);
+        if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord))
+        {
+            return tempWord;
+        }
+        return r;
     }
 
-    public Word horizontalBelow(Word w,int i)
+    public Word horizontalLeft(Word w,int i,int j)// SENARIO 6
     {
         ArrayList<Tile> tempTileArr = new ArrayList<>();
         Tile[] t = null;
         Word tempWord = null;
-        return tempWord;
+        Word r = null;
+        for(;j<15 && b[i][j] != null; j--){}
+        int tempCol = j;
+        for(;j <= tempCol;j++)
+        {
+            tempTileArr.add(b[i][j]);
+        }
+        t = tempTileArr.toArray(new Tile[0]);
+        tempWord = new Word(t,i,tempCol,false);
+        if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord))
+        {
+            return tempWord;
+        }
+        return r;
+    }
+
+    public Word verticalAbove(Word w, int j)// SENARIO 7
+    {
+        ArrayList<Tile> tempTileArr = new ArrayList<>();
+        Tile[] t = null;
+        Word tempWord = null;
+        Word r = null;
+        int i = 0;
+        for(i =w.row;i >= 0 && b[i][j] != null; i--){}
+        int tempRow = i;
+        for(;i <= w.row;i++)
+        {
+            tempTileArr.add(b[i][j]);
+        }
+        t = tempTileArr.toArray(new Tile[0]);
+        tempWord = new Word(t,tempRow,j,true);
+        if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord))
+        {
+            return tempWord;
+        }
+        return r;
+    }
+
+    public Word verticalBelow(Word w, int j)
+    {
+        ArrayList<Tile> tempTileArr = new ArrayList<>();
+        Tile[] t = null;
+        Word tempWord = null;
+        Word r = null;
+        int i = w.row + w.numOfTile - 1;
+        for(;i<15 && b[i][j] != null;i++)
+        {
+            tempTileArr.add(b[i][j]);
+        }
+        t = tempTileArr.toArray(new Tile[0]);
+        tempWord = new Word(t,w.row + w.numOfTile-1,j,true);
+        if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord))
+        {
+            return tempWord;
+        }
+        return r;
     }
 
     public ArrayList<Word> getWords(Word w)
@@ -228,10 +295,9 @@ public class Board {
             return words;
         }
         words.add(w);
-        if(!w.vertical) // Horizontal word
+        if(!w.vertical) // Horizontal word Senario 1-4
         {
-            for(int i = 0; i < 15;i++)
-            {
+            int i = w.row;
                 if(i == 0)
                 {
                     temp = horizontalAfterWord(w, i);
@@ -306,6 +372,10 @@ public class Board {
                             }
                             words.add(temp);
                         }
+                        if(!tempTileArr.isEmpty())
+                        {
+                            tempTileArr.remove(tempTileArr.size() - 1);
+                        }
                         temp = verticalDown(w, i, j);
                         if(temp != null)
                         {   
@@ -323,13 +393,115 @@ public class Board {
                         }
                     }
                 }
-            }
         }
-        else // Vertical word
+        else // Vertical word Senario 5-8
         {
-            
+            temp = null;
+            int j = w.col;
+            if(j == 0)
+            {
+                for(int i = w.row;i < 15 && b[i][j] != null;i++)
+                {
+                    temp = horizontalRight(w, i, j);
+                    if(temp != null)
+                    {
+                        words.add(temp);
+                    }
+                }
+                temp = verticalAbove(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+                temp = verticalBelow(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+            }
+            else if(j == 14)
+            {
+                for(int i = w.row;i < 15 && b[i][j] != null;i++)
+                {
+                    temp = horizontalLeft(w, i, j);
+                    if(temp != null)
+                    {
+                        words.add(temp);
+                    }
+                }
+                temp = verticalAbove(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+                temp = verticalBelow(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+            }
+            else
+            {
+                int t = 0;
+                int tempCol = 0;
+                int tempRow = 0;
+                ArrayList<Tile> tempTileArr = new ArrayList<>();
+                Word tempWord = null;
+                Tile[] currT = null;
+
+                temp = verticalAbove(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+                temp = verticalBelow(w, j);
+                if(temp != null)
+                {
+                    words.add(temp);
+                }
+
+                for(int i = w.row;i < 15 && b[i][j] != null;i++)
+                {
+                    temp = horizontalLeft(w, i, j);
+                    if(temp != null)
+                    {
+                        tempCol = temp.col;
+                        tempRow = temp.row;
+                        for(Tile tile : tempTileArr)
+                        {
+                            tile = temp.tiles[t];
+                            t++;
+                        }
+                        tempTileArr.remove(tempTileArr.size()-1);
+                    }
+                    temp = horizontalRight(w, i, j);
+                    if(temp != null && t > 0)
+                    {
+                        for(int k = 0;k < temp.numOfTile ;k++)
+                        {
+                            tempTileArr.add(temp.tiles[k]);
+                        }
+                    }
+                    currT = tempTileArr.toArray(new Tile[0]);
+                    tempWord = new Word(currT,tempRow,tempCol,false);
+                    if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord))
+                    {
+                        words.add(tempWord);
+                    }
+                }
+            }
         }
         return words;
     }
 
+
+
+    public int getScore(Word w)
+    {
+        if(w.isVertical())
+        {
+            
+        }
+        return 0;
+    }
 }
