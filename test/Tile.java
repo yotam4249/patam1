@@ -1,4 +1,7 @@
 package test;
+
+import java.util.Random;
+
 public class Tile {
     public final int score;
     public final char letter;
@@ -9,10 +12,7 @@ public class Tile {
         this.letter = letter;
     }
 
-    private static Tile creator(int score,char letter)
-    {
-        return new Tile(score,letter);
-    }
+
     
     int getScore()
     {
@@ -29,9 +29,14 @@ public class Tile {
         return ((Integer.hashCode(score)*15) + Character.hashCode(letter));
     }
 	@Override
-    public boolean equals(Object o)
+    public boolean equals(Object o)        
     {
-        if (this==o && this.getClass() == o.getClass())
+        
+        if (this==o)
+        {
+            return true;
+        } 
+        if(this.getClass() == o.getClass())
         {
             Tile t = (Tile)o;
             if(t.getScore() == this.getScore() && t.getLetter() == this.getLetter())
@@ -42,71 +47,44 @@ public class Tile {
         return false;
     }
     public static class Bag{
-        public final int[] starters = {9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
         private int[] amounts = {9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
+        public final int[] starters = amounts.clone();
         private Tile[] tiles;
         private static Bag b = null;
+        private int bagSize=98; 
 
         private Bag()
         {
-            tiles = new Tile[26];
-            tiles[0] = Tile.creator(1,'A');
-            tiles[1] = Tile.creator(3,'B');
-            tiles[2] = Tile.creator(3,'C');
-            tiles[3] = Tile.creator(2, 'D');
-            tiles[4] = Tile.creator(1, 'E');
-            tiles[5] = Tile.creator(4, 'F');
-            tiles[6] = Tile.creator(2, 'G');
-            tiles[7] = Tile.creator(4, 'H');
-            tiles[8] = Tile.creator(1, 'I');
-            tiles[9] = Tile.creator(8, 'J');
-            tiles[10] = Tile.creator(5, 'K');
-            tiles[11] = Tile.creator(1, 'L');
-            tiles[12] = Tile.creator(3, 'M');
-            tiles[13] = Tile.creator(1, 'N');
-            tiles[14] = Tile.creator(1, 'O');
-            tiles[15] = Tile.creator(3, 'P');
-            tiles[16] = Tile.creator(10, 'Q');
-            tiles[17] = Tile.creator(1, 'R');
-            tiles[18] = Tile.creator(1, 'S');
-            tiles[19] = Tile.creator(1, 'T');
-            tiles[20] = Tile.creator(1, 'U');
-            tiles[21] = Tile.creator(4, 'V');
-            tiles[22] = Tile.creator(4, 'W');
-            tiles[23] = Tile.creator(8, 'X');
-            tiles[24] = Tile.creator(4, 'Y');
-            tiles[25] = Tile.creator(10, 'Z');
+            tiles = new Tile[]{
+                new Tile(1, 'A'), new Tile(3, 'B'), new Tile(3, 'C'), new Tile(2, 'D'),
+                new Tile(1, 'E'), new Tile(4, 'F'), new Tile(2, 'G'), new Tile(4, 'H'),
+                new Tile(1, 'I'), new Tile(8, 'J'), new Tile(5, 'K'), new Tile(1, 'L'),
+                new Tile(3, 'M'), new Tile(1, 'N'), new Tile(1, 'O'), new Tile(3, 'P'),
+                new Tile(10, 'Q'), new Tile(1, 'R'), new Tile(1, 'S'), new Tile(1, 'T'),
+                new Tile(1, 'U'), new Tile(4, 'V'), new Tile(4, 'W'), new Tile(8, 'X'),
+                new Tile(4, 'Y'), new Tile(10, 'Z')
+            };
         }
 
-        Tile getRand()
+
+        public Tile getRand()
         {
-            if(this.getClass() != Bag.class)
+            if(bagSize == 0)
             {
                 return null;
             }
-            int i = 0;
-            for(;i < 26;i++)
-            {
-                if(this.amounts[i] != 0)
-                {
-                    break;
-                }
-            }
-            if(i == 25)
-            {
-                return null;
-            }
-            long temp = System.currentTimeMillis();
-            int rand = (int)temp % 26;
+            Random random = new Random();
+            int rand = random.nextInt(26);
             if(this.amounts[rand] == 0)
             {
-                this.getRand();
+                return this.getRand();
             }
             this.amounts[rand] = this.amounts[rand] - 1;
+            this.bagSize--;
             return this.tiles[rand];
         }
 
-        Tile getTile(char c)
+        public Tile getTile(char c)
         {
             for(int i = 0;i < 26;i++)
             {
@@ -115,6 +93,7 @@ public class Tile {
                     if(this.amounts[i] != 0)
                     {
                         this.amounts[i] = this.amounts[i] - 1;
+                        this.bagSize--;
                         return this.tiles[i];
                     }
                     return null;
@@ -123,29 +102,25 @@ public class Tile {
             return null;
         }
 
-        void put(Tile t)
+        public void put(Tile t)
         {
             for(int i = 0;i < 26; i++)
             {
                 if(t == this.tiles[i] && this.amounts[i] < this.starters[i])
                 {
                     this.amounts[i] = this.amounts[i] + 1;
+                    bagSize++;
                     break;
                 }
             }
         }
 
-        int size()
+        public int size()
         {
-            int size = 0;
-            for(int i = 0;i < 26;i++)
-            {
-                size += this.amounts[i];
-            }
-            return size;
+            return bagSize;
         }
 
-        int[] getQuantities()
+        public int[] getQuantities()
         {
             return amounts.clone();
         }
