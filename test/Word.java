@@ -10,16 +10,20 @@ public class Word {
     public final int numOfTile;
     public final int wordScore;
     
-	
+
     public Word(Tile[] tiles, int row, int col,boolean vertical)
     {
+        legalWord = true;
         int counter = 0;
         this.numOfTile = tiles.length;
         this.tiles = new Tile[numOfTile];
         for(int i=0;i<numOfTile;i++)
         {
             this.tiles[i] = tiles[i];
-            counter += tiles[i].score;
+            if(tiles[i] != null)
+            {
+                counter += tiles[i].score;
+            }
         }
         wordScore = counter;
         if(row < 0 || row>15)
@@ -30,7 +34,7 @@ public class Word {
         {
             legalWord = false;
         }
-        else
+        else if(legalWord)
         {
             legalWord = true;
         }
@@ -104,7 +108,7 @@ public class Word {
             {
                 for(int i = 0;i < numOfTile; i++)
                 {
-                    if(!(this.tiles[i].equals(w.tiles[i])))
+                    if(!(this.tiles[i].equals(w.tiles[i])) || w.tiles.length != this.tiles.length)
                     {
                         return false;
                     }

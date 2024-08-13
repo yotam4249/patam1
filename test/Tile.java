@@ -31,7 +31,14 @@ public class Tile {
 	@Override
     public boolean equals(Object o)        
     {
-        
+        if(this == null && o == null)
+        {
+            return true;
+        }
+        if(this == null && o != null)
+        {
+            return false;
+        }
         if (this==o)
         {
             return true;
