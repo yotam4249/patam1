@@ -229,7 +229,7 @@ public class Board {
         for(;j>=0 && b[i][j] != null; j--){}
         j++;
         int tempCol2 = j;
-        for(;j <= tempCol;j++)
+        for(;j < 15 && b[i][j] != null;j++)
         {
             tempTileArr.add(b[i][j]);
         }
@@ -478,23 +478,22 @@ public class Board {
                         tempTileArr.remove(tempTileArr.size()-1);
                         words.add(temp);
                     }
-                    temp = horizontalRight(w, i, j);
-                    if(temp != null)
-                    {
-                        if(horizontalLeft(w, i, j) != null)
-                        {
-                            for(int k = 0;k < temp.numOfTile ;k++)
-                            {
-                                tempTileArr.add(temp.tiles[k]);
+                    else {
+                        temp = horizontalRight(w, i, j);
+                        if (temp != null) {
+                            if (horizontalLeft(w, i, j) != null) {
+                                for (int k = 0; k < temp.numOfTile; k++) {
+                                    tempTileArr.add(temp.tiles[k]);
+                                }
                             }
+                            words.add(temp);
                         }
-                        words.add(temp);
-                    }
-                    currT = tempTileArr.toArray(new Tile[0]);
-                    tempWord = new Word(currT,tempRow,tempCol,false);
-                    if(tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord) && tempWord.tiles.length > 1)
-                    {
-                        words.add(tempWord);
+                        currT = tempTileArr.toArray(new Tile[0]);
+                        tempWord = new Word(currT, tempRow, tempCol, false);
+                        if (tempWord.dicLegalWord && tempWord.legalWord && boardLegal(tempWord)
+                                && tempWord.tiles.length > 1) {
+                            words.add(tempWord);
+                        }
                     }
                 }
             }
